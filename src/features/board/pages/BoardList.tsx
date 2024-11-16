@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import React, { useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { getBoardList } from "../api/api";
 
 interface BoardItem {
@@ -58,6 +58,7 @@ const BoardList = () => {
         <p>로딩 중...</p>
       ) : (
         <>
+          <Link to="/boards/write">글쓰기</Link>
           <Table>
             <thead>
               <tr>

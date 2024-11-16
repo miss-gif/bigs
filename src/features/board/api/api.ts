@@ -34,3 +34,31 @@ export const deleteBoard = async (boardId: string) => {
     throw error;
   }
 };
+
+type UpdateBoardData = {
+  title: string;
+  content: string;
+  category: string;
+};
+
+// 게시판 글 작성 API
+export const createBoard = async (data: { request: UpdateBoardData }) => {
+  try {
+    const response = await axiosInstance.post("/boards", data);
+    return response.data;
+  } catch (error) {
+    console.error("게시판 글쓰기 실패:", error);
+    throw error;
+  }
+};
+
+// 카테고리 목록 조회 API
+export const getBoardCategories = async () => {
+  try {
+    const response = await axiosInstance.get("/boards/categories");
+    return response.data;
+  } catch (error) {
+    console.error("게시판 카테고리 조회 실패:", error);
+    throw error;
+  }
+};
