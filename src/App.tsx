@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import Layout from "./components/layout/Layout";
 import Login from "./features/auth/pages/Login";
-import Signup from "./features/auth/pages/SignUp";
+import Signup from "./features/auth/pages/Signup";
 import BoardDetail from "./features/board/pages/BoardDetail";
 import BoardEdit from "./features/board/pages/BoardEdit";
 import BoardList from "./features/board/pages/BoardList";

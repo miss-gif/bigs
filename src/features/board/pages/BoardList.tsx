@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import React, { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getBoardList } from "../api/api";
 
 interface BoardItem {
@@ -16,6 +17,7 @@ const BoardList = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const fetchBoardList = useCallback(async () => {
     setLoading(true);
@@ -44,6 +46,10 @@ const BoardList = () => {
     setPage(newPage);
   };
 
+  const detailLink = (id: number) => {
+    navigate(`/boards/${id}`);
+  };
+
   return (
     <BoardListContainer>
       <h2>게시판 목록</h2>
@@ -63,7 +69,12 @@ const BoardList = () => {
             </thead>
             <tbody>
               {boards.map((board) => (
-                <tr key={board.id}>
+                <tr
+                  key={board.id}
+                  onClick={() => {
+                    detailLink(board.id);
+                  }}
+                >
                   <td>{board.id}</td>
                   <td>{board.category}</td>
                   <td>{board.title}</td>
