@@ -52,6 +52,7 @@ const Signup = () => {
           <input
             id="name"
             type="text"
+            autoComplete="name"
             {...register("name")}
             placeholder="이름을 입력하세요"
           />
@@ -62,6 +63,7 @@ const Signup = () => {
           <input
             id="password"
             type="password"
+            autoComplete="password"
             {...register("password")}
             placeholder="비밀번호를 입력하세요"
           />
@@ -74,6 +76,7 @@ const Signup = () => {
           <input
             id="confirmPassword"
             type="password"
+            autoComplete="new-password"
             {...register("confirmPassword")}
             placeholder="비밀번호를 다시 입력하세요"
           />

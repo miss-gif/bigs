@@ -46,6 +46,7 @@ const Login = () => {
           <input
             id="password"
             type="password"
+            autoComplete="password"
             {...register("password")}
             placeholder="비밀번호를 입력하세요"
           />
