@@ -28,6 +28,12 @@ export const signup = async (formData: SignupFormValues) => {
   }
 };
 
+// 상태 업데이트 및 로컬스토리지 저장 함수 분리
+const updateTokens = (accessToken: string, refreshToken: string) => {
+  const setTokens = useUserStore.getState().setTokens;
+  setTokens(accessToken, refreshToken);
+};
+
 // 리프레시 토큰 요청 함수
 export const refreshTokenReq = async () => {
   try {
@@ -35,13 +41,8 @@ export const refreshTokenReq = async () => {
       refreshToken: localStorage.getItem("refreshToken"),
     });
 
-    console.log("토큰 갱신 성공:", response.data);
-
     const { accessToken, refreshToken } = response.data;
-
-    // 상태 및 로컬스토리지에 토큰 저장
-    const setTokens = useUserStore.getState().setTokens;
-    setTokens(accessToken, refreshToken); // Zustand 상태 업데이트 + 로컬스토리지 저장
+    updateTokens(accessToken, refreshToken);
 
     return accessToken;
   } catch (error) {
