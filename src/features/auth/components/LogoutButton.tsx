@@ -1,13 +1,8 @@
 import styled from "@emotion/styled";
-import { useUserStore } from "../../../stores/store";
+import { useLogout } from "../hooks/useLogout";
 
 const LogoutButton = () => {
-  const logout = useUserStore((state) => state.logout);
-
-  const handleLogout = () => {
-    logout();
-    alert("로그아웃 되었습니다.");
-  };
+  const { handleLogout } = useLogout();
 
   return <StyledLink onClick={handleLogout}>로그아웃</StyledLink>;
 };
