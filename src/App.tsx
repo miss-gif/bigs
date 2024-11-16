@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import Layout from "./components/layout/Layout";
 import Login from "./features/auth/pages/Login";
-import SignUp from "./features/auth/pages/SignUp";
+import Signup from "./features/auth/pages/SignUp";
 import BoardDetail from "./features/board/pages/BoardDetail";
 import BoardEdit from "./features/board/pages/BoardEdit";
 import BoardList from "./features/board/pages/BoardList";
@@ -21,7 +21,7 @@ const App = () => {
       <Route path="/" element={<Layout />}>
         {/* 인증 */}
         <Route path="login" element={<Login />} />
-        <Route path="signup" element={<SignUp />} />
+        <Route path="signup" element={<Signup />} />
         {/* 게시판 */}
         <Route path="boards" element={<BoardList />} />
         <Route path="boards/:id" element={<BoardDetail />} />

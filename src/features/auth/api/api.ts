@@ -1,6 +1,6 @@
 import { axiosInstance } from "../../../apis/axiosInstance";
 import { useUserStore } from "../../../stores/store";
-import { LoginFormValues } from "../../../types/type";
+import { LoginFormValues, SignupFormValues } from "../../../types/type";
 
 // 로그인
 export const signin = async (data: LoginFormValues) => {
@@ -13,6 +13,17 @@ export const signin = async (data: LoginFormValues) => {
     return response.data;
   } catch (error) {
     console.error("로그인 실패:", error);
+    throw error;
+  }
+};
+
+// 회원가입
+export const signup = async (formData: SignupFormValues) => {
+  try {
+    const response = await axiosInstance.post("/auth/signup", formData);
+    return response.data;
+  } catch (error) {
+    console.error("회원가입 실패:", error);
     throw error;
   }
 };
