@@ -1,7 +1,11 @@
 import styled from "@emotion/styled";
 import { Link } from "react-router-dom";
+import { useUserStore } from "../../stores/store";
+import LogoutButton from "../../features/auth/components/LogoutButton";
 
 const Header = () => {
+  const { accessToken } = useUserStore();
+
   return (
     <HeaderStyled>
       <Logo>
@@ -14,9 +18,15 @@ const Header = () => {
           <li>
             <StyledLink to="/boards">게시판</StyledLink>
           </li>
-          <li>
-            <StyledLink to="/login">로그인</StyledLink>
-          </li>
+          {accessToken ? (
+            <li>
+              <LogoutButton />
+            </li>
+          ) : (
+            <li>
+              <StyledLink to="/login">로그인</StyledLink>
+            </li>
+          )}
         </ul>
       </Nav>
     </HeaderStyled>
@@ -51,12 +61,15 @@ const Logo = styled.h1`
 const Nav = styled.nav`
   ul {
     display: flex;
-    gap: 20px;
+    align-items: center;
+    gap: 12px;
   }
 `;
 
 const StyledLink = styled(Link)`
-  text-decoration: none;
+  display: block;
+  width: 100px;
+  text-align: center;
   color: #343a40;
   font-weight: bold;
   padding: 5px 10px;

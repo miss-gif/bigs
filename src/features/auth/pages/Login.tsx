@@ -1,20 +1,13 @@
 import styled from "@emotion/styled";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
-import { z } from "zod";
+import { Link, useNavigate } from "react-router-dom";
+import { loginSchema } from "../../../schemas/schema";
+import { LoginFormValues } from "../../../types/type";
 import { signin } from "../api/api";
 
-// Zod 스키마 정의
-const loginSchema = z.object({
-  username: z.string().email("유효한 이메일 주소를 입력해주세요."),
-  password: z.string().min(6, "비밀번호는 최소 6자리 이상이어야 합니다."),
-});
-
-// 입력 데이터 타입 정의
-type LoginFormValues = z.infer<typeof loginSchema>;
-
 const Login = () => {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -24,7 +17,12 @@ const Login = () => {
   });
 
   const onSubmit = async (data: LoginFormValues) => {
-    await signin(data);
+    const result = await signin(data);
+    if (result.error) {
+      alert("로그인에 실패했습니다.");
+      return;
+    }
+    navigate(-1);
   };
 
   return (
@@ -72,7 +70,7 @@ const LoginPageStyled = styled.div`
   padding: 20px;
   text-align: center;
 
-  h1 {
+  h2 {
     font-size: 2rem;
     margin-bottom: 20px;
   }
