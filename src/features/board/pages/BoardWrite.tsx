@@ -4,13 +4,27 @@ import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
 import { createBoard, getBoardCategories } from "../api/api";
 
+interface BoardFormData {
+  title: string;
+  content: string;
+  category: string;
+}
+
 const BoardWrite = () => {
+  const [file, setFile] = useState<File | null>(null);
   const [category, setCategory] = useState<{ [key: string]: string }>({});
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<BoardFormData>({
     title: "",
     content: "",
     category: "",
   });
+
+  // 파일 변경 핸들러
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+    }
+  };
 
   // 폼 입력값 처리
   const handleChange = (
@@ -40,16 +54,42 @@ const BoardWrite = () => {
   }, []);
 
   // 폼 제출
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // formData를 request 객체로 감싸서 전달
-    const requestData = {
-      request: formData,
-    };
+    try {
+      // 유효성 검사
+      if (!formData.title.trim()) {
+        alert("제목을 입력해주세요.");
+        return;
+      }
+      if (!formData.content.trim()) {
+        alert("내용을 입력해주세요.");
+        return;
+      }
+      if (!formData.category) {
+        alert("카테고리를 선택해주세요.");
+        return;
+      }
 
-    console.log("입력된 데이터:", requestData); // 수정된 데이터 출력
-    createBoard(requestData); // 수정된 데이터를 서버로 전달
+      const requestData = {
+        request: {
+          title: formData.title.trim(),
+          content: formData.content.trim(),
+          category: formData.category,
+        },
+        ...(file && { file }),
+      };
+
+      const response = await createBoard(requestData);
+      console.log("게시글 작성 성공:", response);
+
+      // 성공 시 처리 (예: 목록 페이지로 이동)
+      // navigate('/boards');
+    } catch (error) {
+      console.error("게시글 작성 실패:", error);
+      alert("게시글 작성에 실패했습니다. 다시 시도해주세요.");
+    }
   };
 
   return (
@@ -99,10 +139,9 @@ const BoardWrite = () => {
             id="file"
             type="file"
             css={FileInput}
-            onChange={handleChange}
+            onChange={handleFileChange}
           />
         </FormGroup>
-
         <SubmitButton type="submit">등록</SubmitButton>
       </form>
     </Container>

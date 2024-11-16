@@ -42,10 +42,39 @@ type UpdateBoardData = {
 };
 
 // 게시판 글 작성 API
-export const createBoard = async (data: { request: UpdateBoardData }) => {
+export const createBoard = async (data: {
+  request: UpdateBoardData;
+  file?: File;
+}) => {
   try {
-    const response = await axiosInstance.post("/boards", data);
-    return response.data;
+    if (data.file) {
+      const formData = new FormData();
+
+      formData.append(
+        "request",
+        new Blob([JSON.stringify(data.request)], { type: "application/json" })
+      );
+      formData.append("file", data.file);
+
+      return await axiosInstance.post("/boards", formData, {
+        // 경로 수정
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+    } else {
+      return await axiosInstance.post(
+        "/boards", // 경로 수정
+        {
+          request: data.request,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
   } catch (error) {
     console.error("게시판 글쓰기 실패:", error);
     throw error;

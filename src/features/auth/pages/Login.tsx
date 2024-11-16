@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { loginSchema } from "../../../schemas/schema";
@@ -17,13 +18,16 @@ const Login = () => {
   });
 
   const onSubmit = async (data: LoginFormValues) => {
-    const result = await signin(data);
-    if (result.error) {
-      alert("로그인에 실패했습니다.");
-      return;
-    }
-    navigate(-1);
+    await signin(data);
+    navigate("/");
   };
+
+  useEffect(() => {
+    const accessToken = localStorage.getItem("accessToken");
+    if (accessToken) {
+      navigate("/");
+    }
+  }, [navigate]);
 
   return (
     <LoginPageStyled>

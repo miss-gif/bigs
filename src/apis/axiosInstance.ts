@@ -4,9 +4,6 @@ import { refreshTokenReq } from "../features/auth/api/api";
 export const axiosInstance = axios.create({
   baseURL: "/api",
   timeout: 10000,
-  headers: {
-    "Content-Type": "application/json",
-  },
 });
 
 // 요청 인터셉터
