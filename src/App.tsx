@@ -7,6 +7,7 @@ import BoardEdit from "./features/board/pages/BoardEdit";
 import BoardList from "./features/board/pages/BoardList";
 import BoardWrite from "./features/board/pages/BoardWrite";
 import NotFoundPage from "./pages/NotFoundPage";
+import PrivateRoute from "./routes/PrivateRoute";
 import { useUserStore } from "./stores/store";
 
 const App = () => {
@@ -23,10 +24,38 @@ const App = () => {
         <Route path="login" element={<Login />} />
         <Route path="signup" element={<Signup />} />
         {/* 게시판 */}
-        <Route path="boards" element={<BoardList />} />
-        <Route path="boards/:id" element={<BoardDetail />} />
-        <Route path="boards/write" element={<BoardWrite />} />
-        <Route path="boards/edit/:id" element={<BoardEdit />} />
+        <Route
+          path="boards"
+          element={
+            <PrivateRoute>
+              <BoardList />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="boards/:id"
+          element={
+            <PrivateRoute>
+              <BoardDetail />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="boards/write"
+          element={
+            <PrivateRoute>
+              <BoardWrite />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="boards/edit/:id"
+          element={
+            <PrivateRoute>
+              <BoardEdit />
+            </PrivateRoute>
+          }
+        />
       </Route>
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
