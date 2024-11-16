@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { getBoardDetail } from "../api/api"; // API 호출 함수
+import { useNavigate, useParams } from "react-router-dom";
+import { deleteBoard, getBoardDetail } from "../api/api"; // API 호출 함수
 
 const BoardDetail = () => {
   interface PostDetail {
@@ -15,6 +15,7 @@ const BoardDetail = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const { id } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!id) {
@@ -37,6 +38,20 @@ const BoardDetail = () => {
     fetchPostDetail();
   }, [id]);
 
+  const deletePost = async () => {
+    if (!id) {
+      return;
+    }
+
+    try {
+      deleteBoard(id);
+      alert("게시글이 삭제되었습니다.");
+      navigate("/boards");
+    } catch (error) {
+      alert("게시글 삭제에 실패했습니다.");
+    }
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return `${date.getFullYear()}. ${date.getMonth() + 1}. ${date.getDate()}`;
@@ -55,6 +70,12 @@ const BoardDetail = () => {
       <h2>게시글 상세</h2>
       {postDetail ? (
         <>
+          <div className="">
+            <div className="">목록</div>
+            <div className="" onClick={deletePost}>
+              삭제
+            </div>
+          </div>
           <div>
             <strong>아이디:</strong> {postDetail.id}
           </div>

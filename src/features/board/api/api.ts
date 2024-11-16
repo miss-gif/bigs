@@ -23,3 +23,14 @@ export const getBoardDetail = async (boardId: string) => {
     throw error;
   }
 };
+
+// 게시판 글 삭제 API
+export const deleteBoard = async (boardId: string) => {
+  try {
+    const response = await axiosInstance.delete(`/boards/${boardId}`);
+    return response.data;
+  } catch (error) {
+    console.error("게시판 글삭제 실패:", error);
+    throw error;
+  }
+};
