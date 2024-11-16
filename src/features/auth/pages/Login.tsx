@@ -1,7 +1,7 @@
-import React from "react";
+import MainWrapper from "../../../components/layout/MainWrapper";
 
 const Login = () => {
-  return <div>Login</div>;
+  return <MainWrapper>Login</MainWrapper>;
 };
 
 export default Login;
