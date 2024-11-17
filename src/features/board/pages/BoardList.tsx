@@ -1,43 +1,39 @@
-import styled from "@emotion/styled";
-import React, { useCallback, useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { BoardListType } from "../../../types/type";
-import { getBoardList } from "../api/api";
+import React from "react";
+import { useSearchParams, useNavigate, Link } from "react-router-dom";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Select,
+  MenuItem,
+  SelectChangeEvent,
+  Typography,
+} from "@mui/material";
+import useBoardList from "../hooks/useBoardList";
+import BoardTable from "../components/BoardTable";
+import PaginationComponent from "../components/PaginationComponent";
 
 const BoardList = () => {
-  const [boards, setBoards] = useState<BoardListType[]>([]);
-  const [page, setPage] = useState(0);
-  const [size, setSize] = useState(10);
-  const [totalPages, setTotalPages] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const fetchBoardList = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await getBoardList(page, size);
-      setBoards(response.content);
-      setTotalPages(response.totalPages);
-    } catch (err) {
-      setError("게시판 목록을 불러오는 데 실패했습니다.");
-    } finally {
-      setLoading(false);
-    }
-  }, [page, size]);
+  const page = parseInt(searchParams.get("page") || "0", 10);
+  const size = parseInt(searchParams.get("size") || "10", 10);
 
-  useEffect(() => {
-    fetchBoardList();
-  }, [fetchBoardList]);
+  const { boards, totalPages, loading, error } = useBoardList(page, size);
 
-  const handleSizeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSize(Number(event.target.value));
-    setPage(0); // 페이지 크기 변경 시 0페이지로 이동
+  const handlePageChange = (
+    _event: React.ChangeEvent<unknown>,
+    value: number
+  ) => {
+    setSearchParams({ page: (value - 1).toString(), size: size.toString() });
   };
 
-  const handlePageChange = (newPage: number) => {
-    setPage(newPage);
+  const handleSizeChange = (event: SelectChangeEvent<number>) => {
+    setSearchParams({
+      page: "0",
+      size: (event.target.value as string).toString(),
+    });
   };
 
   const detailLink = (id: number) => {
@@ -45,141 +41,65 @@ const BoardList = () => {
   };
 
   return (
-    <BoardListContainer>
-      <h2>게시판 목록</h2>
-      {error && <ErrorMessage>{error}</ErrorMessage>}
+    <Box sx={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
+      <Typography
+        variant="h4"
+        sx={{ marginBottom: "20px", textAlign: "center" }}
+      >
+        게시판 목록
+      </Typography>
+      {error && <Typography color="error">{error}</Typography>}
       {loading ? (
-        <p>로딩 중...</p>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <CircularProgress />
+        </Box>
       ) : (
         <>
-          <Link to="/boards/write">글쓰기</Link>
-          <Table>
-            <thead>
-              <tr>
-                <th>아이디</th>
-                <th>카테고리</th>
-                <th>제목</th>
-                <th>생성일</th>
-              </tr>
-            </thead>
-            <tbody>
-              {boards.map((board) => (
-                <tr
-                  key={board.id}
-                  onClick={() => {
-                    detailLink(board.id);
-                  }}
-                >
-                  <td>{board.id}</td>
-                  <td>{board.category}</td>
-                  <td>{board.title}</td>
-                  <td>{new Date(board.createdAt).toLocaleDateString()}</td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-          <Pagination>
-            <button
-              disabled={page === 0}
-              onClick={() => handlePageChange(page - 1)}
+          <Box sx={{ textAlign: "right", marginBottom: "10px" }}>
+            <Button
+              variant="contained"
+              color="primary"
+              component={Link}
+              to="/boards/write"
             >
-              이전
-            </button>
-            {[...Array(totalPages).keys()].map((pageNum) => (
-              <button
-                key={pageNum}
-                className={page === pageNum ? "active" : ""}
-                onClick={() => handlePageChange(pageNum)}
-              >
-                {pageNum + 1}
-              </button>
-            ))}
-            <button
-              disabled={page === totalPages - 1}
-              onClick={() => handlePageChange(page + 1)}
+              글쓰기
+            </Button>
+          </Box>
+          <BoardTable boards={boards} onRowClick={detailLink} />
+          <PaginationComponent
+            page={page}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+          <Box sx={{ textAlign: "center", marginTop: "20px" }}>
+            <Typography
+              variant="body1"
+              component="label"
+              sx={{ marginRight: "10px" }}
             >
-              다음
-            </button>
-          </Pagination>
-          <SizeSelector>
-            <label htmlFor="size">페이지 당 게시글 수: </label>
-            <select id="size" value={size} onChange={handleSizeChange}>
-              <option value={10}>10개</option>
-              <option value={20}>20개</option>
-              <option value={30}>30개</option>
-            </select>
-          </SizeSelector>
+              페이지 당 게시글 수:
+            </Typography>
+            <Select
+              value={size}
+              onChange={handleSizeChange}
+              displayEmpty
+              sx={{ minWidth: "80px" }}
+            >
+              <MenuItem value={10}>10개</MenuItem>
+              <MenuItem value={20}>20개</MenuItem>
+              <MenuItem value={30}>30개</MenuItem>
+            </Select>
+          </Box>
         </>
       )}
-    </BoardListContainer>
+    </Box>
   );
 };
 
 export default BoardList;
-
-// 스타일링
-const BoardListContainer = styled.div`
-  padding: 20px;
-  max-width: 800px;
-  margin: 0 auto;
-`;
-
-const Table = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 20px;
-
-  th,
-  td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: center;
-  }
-
-  th {
-    background-color: #f4f4f4;
-  }
-`;
-
-const Pagination = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-
-  button {
-    margin: 0 5px;
-    padding: 5px 10px;
-    border: 1px solid #ccc;
-    background-color: #fff;
-    cursor: pointer;
-
-    &:disabled {
-      background-color: #eee;
-      cursor: not-allowed;
-    }
-
-    &.active {
-      background-color: #007bff;
-      color: white;
-      border-color: #007bff;
-    }
-  }
-`;
-
-const SizeSelector = styled.div`
-  text-align: center;
-  margin-top: 20px;
-
-  label {
-    margin-right: 10px;
-  }
-
-  select {
-    padding: 5px;
-  }
-`;
-
-const ErrorMessage = styled.p`
-  color: red;
-  text-align: center;
-`;
