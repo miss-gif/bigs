@@ -1,8 +1,10 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import { useEffect, useState } from "react";
-import { createBoard, getBoardCategories } from "../api/api";
+import { useState } from "react";
+import { createBoard } from "../api/api";
+import useFetchCategories from "../hooks/useFetchCategories";
+import { useNavigate } from "react-router-dom";
 
 interface BoardFormData {
   title: string;
@@ -12,12 +14,13 @@ interface BoardFormData {
 
 const BoardWrite = () => {
   const [file, setFile] = useState<File | null>(null);
-  const [category, setCategory] = useState<{ [key: string]: string }>({});
   const [formData, setFormData] = useState<BoardFormData>({
     title: "",
     content: "",
     category: "",
   });
+  const { categories, error, loading } = useFetchCategories();
+  const navigate = useNavigate();
 
   // 파일 변경 핸들러
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,20 +41,6 @@ const BoardWrite = () => {
       [id]: value, // id 값에 해당하는 필드만 업데이트
     }));
   };
-
-  // 카테고리 조회
-  useEffect(() => {
-    const fetchCategory = async () => {
-      try {
-        const categories = await getBoardCategories();
-        console.log(categories);
-        setCategory(categories);
-      } catch (error) {
-        console.error("카테고리 목록 조회 실패:", error);
-      }
-    };
-    fetchCategory();
-  }, []);
 
   // 폼 제출
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -84,8 +73,7 @@ const BoardWrite = () => {
       const response = await createBoard(requestData);
       console.log("게시글 작성 성공:", response);
 
-      // 성공 시 처리 (예: 목록 페이지로 이동)
-      // navigate('/boards');
+      navigate("/boards");
     } catch (error) {
       console.error("게시글 작성 실패:", error);
       alert("게시글 작성에 실패했습니다. 다시 시도해주세요.");
@@ -119,18 +107,24 @@ const BoardWrite = () => {
 
         <FormGroup>
           <label htmlFor="category">카테고리</label>
-          <select
-            id="category"
-            value={formData.category}
-            onChange={handleChange}
-          >
-            <option value="">카테고리를 선택하세요</option>
-            {Object.entries(category).map(([key, value]) => (
-              <option key={key} value={key}>
-                {value}
-              </option>
-            ))}
-          </select>
+          {loading ? (
+            <p>로딩 중...</p>
+          ) : error ? (
+            <p>{error}</p>
+          ) : (
+            <select
+              id="category"
+              value={formData.category}
+              onChange={handleChange}
+            >
+              <option value="">카테고리를 선택하세요</option>
+              {Object.entries(categories).map(([key, value]) => (
+                <option key={key} value={key}>
+                  {value}
+                </option>
+              ))}
+            </select>
+          )}
         </FormGroup>
 
         <FormGroup>

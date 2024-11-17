@@ -1,15 +1,15 @@
-import { useState, useEffect } from "react";
-import { PostData } from "../../../types/type";
+import { useEffect, useState } from "react";
+import { BoardDetailType } from "../../../types/type";
 import { getBoardDetail } from "../api/api";
 
 type UsePostDetailResult = {
-  postDetail: PostData | null;
+  postDetail: BoardDetailType | null;
   loading: boolean;
   error: string | null;
 };
 
 export const usePostDetail = (id: string | undefined): UsePostDetailResult => {
-  const [postDetail, setPostDetail] = useState<PostData | null>(null);
+  const [postDetail, setPostDetail] = useState<BoardDetailType | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 

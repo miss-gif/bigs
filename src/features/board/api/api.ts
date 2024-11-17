@@ -38,7 +38,7 @@ export const deleteBoard = async (boardId: string) => {
 type UpdateBoardData = {
   title: string;
   content: string;
-  category: string;
+  boardCategory: string;
 };
 
 /**

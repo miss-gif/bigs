@@ -25,6 +25,8 @@ const BoardDetail = () => {
     navigate("/boards");
   };
 
+  console.log(postDetail);
+
   if (postLoading || deleteLoading) {
     return <div>로딩 중...</div>;
   }
@@ -61,7 +63,8 @@ const BoardDetail = () => {
               <strong>제목:</strong> {postDetail.title}
             </div>
             <div>
-              <strong>카테고리:</strong> {postDetail.category}
+              <strong>카테고리:</strong>
+              {postDetail.boardCategory}
             </div>
             <div>
               <strong>이미지:</strong>
