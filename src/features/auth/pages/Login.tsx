@@ -1,11 +1,14 @@
-import styled from "@emotion/styled";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
+import { ErrorMessageStyled } from "../../../css/ErrorMessageStyled";
+import { FormStyled } from "../../../css/FormStyled";
 import { loginSchema } from "../../../schemas/schema";
 import { LoginFormValues } from "../../../types/type";
+import useProtectedRoute from "../../board/hooks/useProtectedRoute";
 import { signin } from "../api/api";
+import { FooterLink } from "../components/FooterLink";
+import PageWrapper from "../components/PageWrapper";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -22,18 +25,14 @@ const Login = () => {
     navigate("/");
   };
 
-  useEffect(() => {
-    const accessToken = localStorage.getItem("accessToken");
-    if (accessToken) {
-      navigate("/");
-    }
-  }, [navigate]);
+  // 로그인 상태에서는 로그인 페이지로 이동할 수 없도록 설정
+  useProtectedRoute();
 
   return (
-    <LoginPageStyled>
-      <h2>로그인</h2>
+    <PageWrapper title="로그인">
       <FormStyled onSubmit={handleSubmit(onSubmit)}>
-        <div className="form-group">
+        <fieldset>
+          <legend>이메일 입력</legend>
           <label htmlFor="email">이메일</label>
           <input
             id="email"
@@ -42,10 +41,11 @@ const Login = () => {
             placeholder="이메일을 입력하세요"
           />
           {errors.username && (
-            <ErrorMessage>{errors.username.message}</ErrorMessage>
+            <ErrorMessageStyled>{errors.username.message}</ErrorMessageStyled>
           )}
-        </div>
-        <div className="form-group">
+        </fieldset>
+        <fieldset>
+          <legend>비밀번호 입력</legend>
           <label htmlFor="password">비밀번호</label>
           <input
             id="password"
@@ -55,84 +55,16 @@ const Login = () => {
             placeholder="비밀번호를 입력하세요"
           />
           {errors.password && (
-            <ErrorMessage>{errors.password.message}</ErrorMessage>
+            <ErrorMessageStyled>{errors.password.message}</ErrorMessageStyled>
           )}
-        </div>
+        </fieldset>
         <button type="submit">로그인</button>
       </FormStyled>
-      <SignUpLink>
+      <FooterLink>
         계정이 없으신가요? <Link to="/signup">회원가입</Link>
-      </SignUpLink>
-    </LoginPageStyled>
+      </FooterLink>
+    </PageWrapper>
   );
 };
 
 export default Login;
-
-const LoginPageStyled = styled.div`
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 20px;
-  text-align: center;
-
-  h2 {
-    font-size: 2rem;
-    margin-bottom: 20px;
-  }
-`;
-
-const FormStyled = styled.form`
-  .form-group {
-    margin-bottom: 15px;
-    text-align: left;
-
-    label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-    }
-
-    input {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 1rem;
-    }
-  }
-
-  button {
-    width: 100%;
-    padding: 10px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    font-size: 1rem;
-    cursor: pointer;
-
-    &:hover {
-      background-color: #0056b3;
-    }
-  }
-`;
-
-const ErrorMessage = styled.p`
-  color: #d9534f;
-  font-size: 0.875rem;
-  margin-top: 5px;
-`;
-
-const SignUpLink = styled.div`
-  margin-top: 15px;
-  font-size: 0.875rem;
-
-  a {
-    color: #007bff;
-    text-decoration: none;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-`;

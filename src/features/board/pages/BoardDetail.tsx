@@ -94,7 +94,7 @@ const BoardDetail = () => {
               <strong>카테고리:</strong> {postDetail.boardCategory}
             </div>
             <div>
-              <strong>이미지:</strong>{" "}
+              <strong>이미지:</strong>
               <img
                 src={`https://front-mission.bigs.or.kr${postDetail.imageUrl}`}
                 alt={postDetail.title}

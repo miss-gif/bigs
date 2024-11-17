@@ -8,7 +8,7 @@ export const loginSchema = z.object({
 export const signupSchema = z
   .object({
     username: z.string().email("유효한 이메일 주소를 입력해주세요."),
-    name: z.string().min(2, "이름은 최소 2글자 이상이어야 합니다."),
+    name: z.string().min(1, "이름은 최소 1글자 이상이어야 합니다."),
     password: z
       .string()
       .min(8, "비밀번호는 최소 8자리 이상이어야 합니다.")
