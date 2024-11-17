@@ -6,3 +6,13 @@ export type LoginFormValues = z.infer<typeof loginSchema>;
 
 // 회원가입 입력 데이터 타입 정의
 export type SignupFormValues = z.infer<typeof signupSchema>;
+
+// 게시글 타입 정의
+export interface PostData {
+  id: number;
+  title: string;
+  content?: string;
+  category: string;
+  createdAt: string;
+  imageUrl?: string;
+}

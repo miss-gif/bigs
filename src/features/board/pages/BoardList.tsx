@@ -2,16 +2,10 @@ import styled from "@emotion/styled";
 import React, { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getBoardList } from "../api/api";
-
-interface BoardItem {
-  id: number;
-  category: string;
-  title: string;
-  createdAt: string;
-}
+import { PostData } from "../../../types/type";
 
 const BoardList = () => {
-  const [boards, setBoards] = useState<BoardItem[]>([]);
+  const [boards, setBoards] = useState<PostData[]>([]);
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
