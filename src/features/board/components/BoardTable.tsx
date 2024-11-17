@@ -17,10 +17,10 @@ const BoardTable: React.FC<Props> = ({ boards, onRowClick }) => (
   <Table>
     <TableHead>
       <TableRow>
-        <TableCell>ID</TableCell>
-        <TableCell>카테고리</TableCell>
-        <TableCell>제목</TableCell>
-        <TableCell>생성일</TableCell>
+        <TableCell sx={{ width: 50, textAlign: "center" }}>ID</TableCell>
+        <TableCell sx={{ width: 50, textAlign: "center" }}>카테고리</TableCell>
+        <TableCell sx={{ textAlign: "center" }}>제목</TableCell>
+        <TableCell sx={{ width: 120, textAlign: "center" }}>생성일</TableCell>
       </TableRow>
     </TableHead>
     <TableBody>
