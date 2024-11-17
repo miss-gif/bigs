@@ -11,6 +11,9 @@ const MainWrapper = ({ children }: MainWrapperProps) => {
 export default MainWrapper;
 
 const WrapperStyled = styled.main`
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
   margin-top: 60px;
   min-height: 100vh;
 `;

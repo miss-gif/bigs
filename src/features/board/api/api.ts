@@ -41,39 +41,37 @@ type UpdateBoardData = {
   category: string;
 };
 
+/**
+ * ! 게시판 파일이 있는 경우만 글쓰기가 가능
+ * ! 게시판 파일이 없는 경우는 글쓰기가 불가능
+ */
+
 // 게시판 글 작성 API
 export const createBoard = async (data: {
   request: UpdateBoardData;
-  file?: File;
+  file?: File | null; // 파일이 있을 수도, 없을 수도 있음
 }) => {
+  console.log(data);
+  console.log(data.request);
+
   try {
+    const headers = {
+      "Content-Type": data.file ? "multipart/form-data" : "application/json",
+    };
+
+    // 파일이 있는 경우 FormData 사용
     if (data.file) {
       const formData = new FormData();
-
       formData.append(
         "request",
         new Blob([JSON.stringify(data.request)], { type: "application/json" })
       );
-      formData.append("file", data.file);
+      formData.append("file", data.file); // 파일이 존재하면 파일을 첨부
 
-      return await axiosInstance.post("/boards", formData, {
-        // 경로 수정
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      return await axiosInstance.post("/boards", formData, { headers });
     } else {
-      return await axiosInstance.post(
-        "/boards", // 경로 수정
-        {
-          request: data.request,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      // 파일이 없을 경우 JSON만 전송
+      return await axiosInstance.post("/boards", data, { headers });
     }
   } catch (error) {
     console.error("게시판 글쓰기 실패:", error);
