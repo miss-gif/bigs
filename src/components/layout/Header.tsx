@@ -38,6 +38,7 @@ export default Header;
 // 스타일링
 const HeaderStyled = styled.header`
   position: fixed;
+  z-index: 1000;
   top: 0;
   left: 0;
   height: 60px;
