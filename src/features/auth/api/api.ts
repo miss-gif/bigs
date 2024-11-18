@@ -22,17 +22,10 @@ const updateTokens = (accessToken: string, refreshToken: string) => {
 
 // 리프레시 토큰 요청 함수
 export const refreshTokenReq = async () => {
-  try {
-    const response = await axiosInstance.post("/auth/refresh", {
-      refreshToken: localStorage.getItem("refreshToken"),
-    });
+  const response = await axiosInstance.post("/auth/refresh", {
+    refreshToken: localStorage.getItem("refreshToken"),
+  });
 
-    const { accessToken, refreshToken } = response.data;
-    updateTokens(accessToken, refreshToken);
-
-    return accessToken;
-  } catch (error) {
-    console.error("리프레시 토큰 요청 실패", error);
-    throw error;
-  }
+  const { accessToken, refreshToken } = response.data;
+  updateTokens(accessToken, refreshToken);
 };
