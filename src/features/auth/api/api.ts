@@ -1,4 +1,3 @@
-import { toast } from "react-toastify";
 import { axiosInstance } from "../../../apis/axiosInstance";
 import { useUserStore } from "../../../stores/store";
 import { LoginFormValues, SignupFormValues } from "../../../types/type";
@@ -11,14 +10,8 @@ export const signin = async (data: LoginFormValues) => {
 
 // 회원가입
 export const signup = async (formData: SignupFormValues) => {
-  try {
-    const response = await axiosInstance.post("/auth/signup", formData);
-    toast.success("회원가입 성공");
-    return response.data;
-  } catch (error) {
-    toast.error("회원가입 실패");
-    throw error;
-  }
+  const response = await axiosInstance.post("/auth/signup", formData);
+  return response.data;
 };
 
 // 상태 업데이트 및 로컬스토리지 저장 함수 분리

@@ -1,17 +1,17 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ErrorMessageStyled } from "../../../css/ErrorMessageStyled";
 import { FormStyled } from "../../../css/FormStyled";
 import { signupSchema } from "../../../schemas/schema";
 import { SignupFormValues } from "../../../types/type";
 import useProtectedRoute from "../../board/hooks/useProtectedRoute";
-import { signup } from "../api/api";
 import { FooterLink } from "../components/FooterLink";
 import PageWrapper from "../components/PageWrapper";
+import { useSignup } from "../hooks/useSignup";
 
 const Signup = () => {
-  const navigate = useNavigate();
+  const { handleSignup } = useSignup();
 
   const {
     register,
@@ -21,17 +21,12 @@ const Signup = () => {
     resolver: zodResolver(signupSchema),
   });
 
-  const onSubmit = async (data: SignupFormValues) => {
-    await signup(data);
-    navigate("/login");
-  };
-
   // 로그인 상태에서는 로그인 페이지로 이동할 수 없도록 설정
   useProtectedRoute();
 
   return (
     <PageWrapper title="회원가입">
-      <FormStyled onSubmit={handleSubmit(onSubmit)}>
+      <FormStyled onSubmit={handleSubmit(handleSignup)}>
         <fieldset>
           <legend>이메일 입력</legend>
           <label htmlFor="username">이메일</label>

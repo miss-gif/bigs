@@ -11,7 +11,7 @@ import PageWrapper from "../components/PageWrapper";
 import { useLogin } from "../hooks/useLogin";
 
 const Login = () => {
-  const { handleSignin } = useLogin();
+  const { handleLogin } = useLogin();
   const {
     register,
     handleSubmit,
@@ -21,7 +21,7 @@ const Login = () => {
   });
 
   const onSubmit = async (data: LoginFormValues) => {
-    await handleSignin(data);
+    await handleLogin(data);
   };
 
   // 로그인 상태에서는 로그인 페이지로 이동할 수 없도록 설정

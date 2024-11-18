@@ -8,7 +8,7 @@ export const useLogin = () => {
   const setTokens = useUserStore((state) => state.setTokens);
   const navigate = useNavigate();
 
-  const handleSignin = async (data: LoginFormValues) => {
+  const handleLogin = async (data: LoginFormValues) => {
     try {
       const { accessToken, refreshToken } = await signin(data);
       setTokens(accessToken, refreshToken);
@@ -20,5 +20,5 @@ export const useLogin = () => {
     }
   };
 
-  return { handleSignin };
+  return { handleLogin };
 };
