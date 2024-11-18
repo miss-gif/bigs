@@ -18,7 +18,7 @@ export interface BoardListType {
 // 게시글 상세 타입 정의
 export interface BoardDetailType {
   id: number;
-  category: string;
+  boardCategory: string;
   title: string;
   createdAt: string;
   content: string;

@@ -25,7 +25,11 @@ const Layout = () => {
         console.log("토큰 갱신 성공");
       } catch (error) {
         console.error("토큰 갱신 실패. 로그아웃 처리.");
-        logout(); // 리프레시 실패 시 로그아웃 처리
+        logout(); // 로그아웃 처리
+        if (timeoutId !== null) {
+          clearTimeout(timeoutId);
+          timeoutId = null; // 타이머 초기화
+        }
       }
     };
 
@@ -37,8 +41,10 @@ const Layout = () => {
 
       try {
         const payload = JSON.parse(atob(accessToken.split(".")[1])); // 토큰 디코딩
-        const expiresIn = payload.exp * 1000 - Date.now(); // 만료 시간까지 남은 시간(ms)
-        return Math.max(expiresIn - 60 * 1000, 0); // 만료 1분 전 리프레시 시도
+        const expiresIn = payload.exp * 1000 - Date.now(); // 만료 시간(ms)
+        const refreshIn = Math.max(expiresIn - 60 * 1000, 0); // 1분 전 리프레시
+        console.log("다음 리프레시까지 남은 시간(ms):", refreshIn);
+        return refreshIn;
       } catch (error) {
         console.error("토큰 디코딩 실패:", error);
         return 0; // 실패 시 리프레시 시도하지 않음
@@ -46,10 +52,15 @@ const Layout = () => {
     };
 
     const setupRefresh = () => {
-      const nextRefreshIn = calculateNextRefresh();
-      if (nextRefreshIn <= 0) return; // 만약 리프레시 시도할 시간이 없으면 종료
+      if (timeoutId !== null) {
+        clearTimeout(timeoutId); // 중복 타이머 방지
+      }
 
-      // console.log("다음 리프레시까지 남은 시간(ms):", nextRefreshIn);
+      const nextRefreshIn = calculateNextRefresh();
+      if (nextRefreshIn <= 0) {
+        logout(); // 만료된 토큰이면 로그아웃 처리
+        return;
+      }
 
       timeoutId = setTimeout(async () => {
         await refresh(); // 리프레시 시도
@@ -57,12 +68,12 @@ const Layout = () => {
       }, nextRefreshIn);
     };
 
-    // 초기 설정 실행
-    setupRefresh();
+    setupRefresh(); // 초기 설정 실행
 
     return () => {
       if (timeoutId !== null) {
-        clearTimeout(timeoutId); // 타이머 ID를 이용해 타이머 종료
+        clearTimeout(timeoutId); // 언마운트 시 타이머 종료
+        timeoutId = null;
       }
     };
   };

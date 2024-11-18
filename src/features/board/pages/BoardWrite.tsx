@@ -65,7 +65,7 @@ const BoardWrite = () => {
         request: {
           title: formData.title.trim(),
           content: formData.content.trim(),
-          category: formData.category,
+          boardCategory: formData.category,
         },
         ...(file && { file }),
       };
