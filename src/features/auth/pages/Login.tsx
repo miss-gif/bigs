@@ -1,17 +1,17 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ErrorMessageStyled } from "../../../css/ErrorMessageStyled";
 import { FormStyled } from "../../../css/FormStyled";
 import { loginSchema } from "../../../schemas/schema";
 import { LoginFormValues } from "../../../types/type";
 import useProtectedRoute from "../../board/hooks/useProtectedRoute";
-import { signin } from "../api/api";
 import { FooterLink } from "../components/FooterLink";
 import PageWrapper from "../components/PageWrapper";
+import { useLogin } from "../hooks/useLogin";
 
 const Login = () => {
-  const navigate = useNavigate();
+  const { handleSignin } = useLogin();
   const {
     register,
     handleSubmit,
@@ -21,8 +21,7 @@ const Login = () => {
   });
 
   const onSubmit = async (data: LoginFormValues) => {
-    await signin(data);
-    navigate("/");
+    await handleSignin(data);
   };
 
   // 로그인 상태에서는 로그인 페이지로 이동할 수 없도록 설정

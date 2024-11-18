@@ -5,18 +5,8 @@ import { LoginFormValues, SignupFormValues } from "../../../types/type";
 
 // 로그인
 export const signin = async (data: LoginFormValues) => {
-  try {
-    const response = await axiosInstance.post("/auth/signin", data);
-    const { accessToken, refreshToken } = response.data;
-    // Zustand 상태 업데이트
-    const setTokens = useUserStore.getState().setTokens;
-    setTokens(accessToken, refreshToken);
-    toast.success("로그인 성공");
-    return response.data;
-  } catch (error) {
-    toast.error("로그인에 실패");
-    throw error;
-  }
+  const response = await axiosInstance.post("/auth/signin", data);
+  return response.data;
 };
 
 // 회원가입
