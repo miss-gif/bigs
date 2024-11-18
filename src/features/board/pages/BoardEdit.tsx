@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import useFetchCategories from "../hooks/useFetchCategories";
 import { usePostDetail } from "../hooks/usePostDetail";
 import { axiosInstance } from "../../../apis/axiosInstance";
+import { toast } from "react-toastify";
 
 const BoardEdit = () => {
   const { id } = useParams();
@@ -97,11 +98,10 @@ const BoardEdit = () => {
         await axiosInstance.patch(`/boards/${id}`, updateData, { headers });
       }
 
-      alert("게시글이 성공적으로 수정되었습니다.");
+      toast.success("수정 성공");
       navigate(`/boards/${id}`);
     } catch (error) {
-      console.error("게시글 수정 실패:", error);
-      alert("게시글 수정에 실패했습니다. 다시 시도해주세요.");
+      toast.error("수정 실패");
     }
   };
 

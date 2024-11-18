@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import { axiosInstance } from "../../../apis/axiosInstance";
 import { useUserStore } from "../../../stores/store";
 import { LoginFormValues, SignupFormValues } from "../../../types/type";
@@ -10,9 +11,10 @@ export const signin = async (data: LoginFormValues) => {
     // Zustand 상태 업데이트
     const setTokens = useUserStore.getState().setTokens;
     setTokens(accessToken, refreshToken);
+    toast.success("로그인 성공");
     return response.data;
   } catch (error) {
-    console.error("로그인 실패:", error);
+    toast.error("로그인에 실패");
     throw error;
   }
 };
@@ -21,9 +23,10 @@ export const signin = async (data: LoginFormValues) => {
 export const signup = async (formData: SignupFormValues) => {
   try {
     const response = await axiosInstance.post("/auth/signup", formData);
+    toast.success("회원가입 성공");
     return response.data;
   } catch (error) {
-    console.error("회원가입 실패:", error);
+    toast.error("회원가입 실패");
     throw error;
   }
 };

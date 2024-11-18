@@ -5,6 +5,7 @@ import { useState } from "react";
 import { createBoard } from "../api/api";
 import useFetchCategories from "../hooks/useFetchCategories";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 interface BoardFormData {
   title: string;
@@ -65,18 +66,16 @@ const BoardWrite = () => {
         request: {
           title: formData.title.trim(),
           content: formData.content.trim(),
-          boardCategory: formData.category,
+          category: formData.category,
         },
         ...(file && { file }),
       };
 
-      const response = await createBoard(requestData);
-      console.log("게시글 작성 성공:", response);
-
+      await createBoard(requestData);
+      toast.success("글쓰기 성공");
       navigate("/boards");
     } catch (error) {
-      console.error("게시글 작성 실패:", error);
-      alert("게시글 작성에 실패했습니다. 다시 시도해주세요.");
+      console.error("글쓰기 실패", error);
     }
   };
 

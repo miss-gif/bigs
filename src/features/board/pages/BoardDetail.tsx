@@ -30,7 +30,8 @@ const BoardDetail = () => {
 
   const handleDelete = async () => {
     if (!id) return;
-    await postDelete(id);
+
+    confirm("게시글을 삭제하시겠습니까?") && (await postDelete(id));
     navigate("/boards");
   };
 

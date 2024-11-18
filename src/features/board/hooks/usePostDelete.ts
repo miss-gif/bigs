@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { deleteBoard } from "../api/api";
+import { toast } from "react-toastify";
 
 type UsePostDeleteResult = {
   postDelete: (id: string) => Promise<void>;
@@ -16,7 +17,7 @@ export const usePostDelete = (): UsePostDeleteResult => {
     setError(null);
     try {
       await deleteBoard(id);
-      alert("게시글이 삭제되었습니다.");
+      toast.success("삭제 성공");
     } catch (err) {
       setError("게시글 삭제에 실패했습니다.");
     } finally {

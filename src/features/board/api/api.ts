@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import { axiosInstance } from "../../../apis/axiosInstance";
 
 // 게시판 목록 조회 API
@@ -67,14 +68,13 @@ export const createBoard = async (data: {
         new Blob([JSON.stringify(data.request)], { type: "application/json" })
       );
       formData.append("file", data.file); // 파일이 존재하면 파일을 첨부
-
       return await axiosInstance.post("/boards", formData, { headers });
     } else {
       // 파일이 없을 경우 JSON만 전송
       return await axiosInstance.post("/boards", data, { headers });
     }
   } catch (error) {
-    console.error("게시판 글쓰기 실패:", error);
+    toast.error("글쓰기 실패");
     throw error;
   }
 };

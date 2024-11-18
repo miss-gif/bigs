@@ -20,9 +20,9 @@ const Layout = () => {
       }
 
       try {
-        console.log("리프레시 시도 중...");
+        // console.log("리프레시 시도 중...");
         await refreshTokenReq(); // 리프레시 시도
-        console.log("토큰 갱신 성공");
+        // console.log("토큰 갱신 성공");
       } catch (error) {
         console.error("토큰 갱신 실패. 로그아웃 처리.");
         logout(); // 로그아웃 처리
@@ -43,7 +43,7 @@ const Layout = () => {
         const payload = JSON.parse(atob(accessToken.split(".")[1])); // 토큰 디코딩
         const expiresIn = payload.exp * 1000 - Date.now(); // 만료 시간(ms)
         const refreshIn = Math.max(expiresIn - 60 * 1000, 0); // 1분 전 리프레시
-        console.log("다음 리프레시까지 남은 시간(ms):", refreshIn);
+        // console.log("다음 리프레시까지 남은 시간(ms):", refreshIn);
         return refreshIn;
       } catch (error) {
         console.error("토큰 디코딩 실패:", error);

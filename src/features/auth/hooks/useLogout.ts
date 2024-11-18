@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useUserStore } from "../../../stores/store";
+import { toast } from "react-toastify";
 
 export const useLogout = () => {
   const navigate = useNavigate();
@@ -7,8 +8,8 @@ export const useLogout = () => {
 
   const handleLogout = () => {
     logout();
+    toast.success("로그아웃 되었습니다.");
     navigate("/");
-    alert("로그아웃 되었습니다.");
   };
   return { handleLogout };
 };
