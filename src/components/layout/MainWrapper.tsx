@@ -16,4 +16,5 @@ const WrapperStyled = styled.main`
   margin: 0 auto;
   margin-top: 60px;
   min-height: 100vh;
+  padding: 0 20px;
 `;

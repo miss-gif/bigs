@@ -22,11 +22,7 @@ const useBoardList = (page: number, size: number) => {
     }
   }, [page, size]);
 
-  useEffect(() => {
-    fetchBoardList();
-  }, [fetchBoardList]);
-
-  return { boards, totalPages, loading, error };
+  return { boards, totalPages, loading, error, fetchBoardList };
 };
 
 export default useBoardList;

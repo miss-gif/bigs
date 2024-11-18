@@ -1,9 +1,12 @@
+/** @jsxImportSource @emotion/react */
+import { css } from "@emotion/react";
+import styled from "@emotion/styled";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import { axiosInstance } from "../../../apis/axiosInstance";
 import useFetchCategories from "../hooks/useFetchCategories";
 import { usePostDetail } from "../hooks/usePostDetail";
-import { axiosInstance } from "../../../apis/axiosInstance";
-import { toast } from "react-toastify";
 
 const BoardEdit = () => {
   const { id } = useParams();
@@ -23,13 +26,20 @@ const BoardEdit = () => {
     error: categoryError,
   } = useFetchCategories();
 
-  // 폼 데이터 관리
-  const [formData, setFormData] = useState({
+  interface BoardFormData {
+    title: string;
+    content: string;
+    category: string;
+    file?: string;
+  }
+
+  const [file, setFile] = useState<File | null>(null);
+  const [formData, setFormData] = useState<BoardFormData>({
     title: "",
     content: "",
     category: "",
+    file: "",
   });
-  const [file, setFile] = useState<File | null>(null);
 
   // 게시글 상세 데이터를 폼에 반영
   useEffect(() => {
@@ -37,7 +47,7 @@ const BoardEdit = () => {
       setFormData({
         title: postDetail.title,
         content: postDetail.content,
-        category: postDetail.category,
+        category: postDetail.boardCategory,
       });
     }
   }, [postDetail]);
@@ -118,63 +128,135 @@ const BoardEdit = () => {
   }
 
   return (
-    <div>
-      <h2>게시글 수정</h2>
+    <Container>
+      <Title>글 수정</Title>
+
       <form onSubmit={(e) => e.preventDefault()}>
-        <div>
-          <div>
-            <label htmlFor="title">제목</label>
-            <input
-              id="title"
-              value={formData.title}
-              onChange={handleChange}
-              placeholder="제목을 입력하세요"
+        <FormGroup>
+          <label htmlFor="category">카테고리</label>
+          <select
+            id="category"
+            value={formData.category}
+            onChange={handleChange}
+          >
+            <option value="">카테고리를 선택하세요</option>
+            {Object.entries(categories).map(([key, value]) => (
+              <option key={key} value={key}>
+                {value}
+              </option>
+            ))}
+          </select>
+        </FormGroup>
+
+        <FormGroup>
+          <label htmlFor="title">제목</label>
+          <input
+            id="title"
+            value={formData.title}
+            onChange={handleChange}
+            placeholder="제목을 입력하세요"
+          />
+        </FormGroup>
+
+        <FormGroup>
+          <label htmlFor="content">내용</label>
+          <textarea
+            id="content"
+            value={formData.content}
+            onChange={handleChange}
+            placeholder="내용을 입력하세요"
+            rows={5}
+          />
+        </FormGroup>
+
+        <FormGroup>
+          <label htmlFor="file">
+            파일 첨부 <em>(필수)</em> ※ 기능상 문제로 이미지를 필수로
+            첨부해야합니다.
+          </label>
+          <input
+            type="file"
+            id="file"
+            css={FileInput}
+            onChange={handleFileChange}
+          />
+          {postDetail.imageUrl && (
+            <img
+              src={`https://front-mission.bigs.or.kr${postDetail.imageUrl}`}
+              alt={postDetail.title}
+              width="300"
             />
-          </div>
-          <div>
-            <label htmlFor="content">내용</label>
-            <textarea
-              id="content"
-              value={formData.content}
-              onChange={handleChange}
-              placeholder="내용을 입력하세요"
-              rows={5}
-            />
-          </div>
-          <div>
-            <label htmlFor="category">카테고리</label>
-            <select
-              id="category"
-              value={formData.category}
-              onChange={handleChange}
-            >
-              <option value="">카테고리를 선택하세요</option>
-              {Object.entries(categories).map(([key, value]) => (
-                <option key={key} value={key}>
-                  {value}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label htmlFor="file">이미지 업로드</label>
-            <input type="file" id="file" onChange={handleFileChange} />
-            {postDetail.imageUrl && (
-              <img
-                src={`https://front-mission.bigs.or.kr${postDetail.imageUrl}`}
-                alt={postDetail.title}
-                width="300"
-              />
-            )}
-          </div>
-        </div>
-        <div>
-          <Link to="/boards">취소</Link>
-          <button onClick={handleEdit}>수정</button>
-        </div>
+          )}
+        </FormGroup>
+        <SubmitButton onClick={handleEdit}>수정</SubmitButton>
       </form>
-    </div>
+    </Container>
   );
 };
 
 export default BoardEdit;
+
+const Container = styled.div`
+  width: 100%;
+  padding: 40px 0;
+`;
+
+const Title = styled.h2`
+  font-size: 2rem;
+  margin-bottom: 20px;
+  text-align: center;
+`;
+
+const FormGroup = styled.div`
+  margin-bottom: 16px;
+
+  label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+
+  input,
+  textarea,
+  select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+
+    &:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 4px rgba(0, 123, 255, 0.5);
+    }
+  }
+
+  textarea {
+    resize: none;
+    height: 220px;
+  }
+`;
+
+const FileInput = css`
+  display: block;
+  margin-top: 8px;
+`;
+
+const SubmitButton = styled.button`
+  width: 100%;
+  padding: 12px 0;
+  font-size: 18px;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+
+  &:active {
+    background-color: #003d80;
+  }
+`;

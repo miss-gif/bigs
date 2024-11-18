@@ -1,17 +1,18 @@
-import React from "react";
-import { useSearchParams, useNavigate, Link } from "react-router-dom";
+import styled from "@emotion/styled";
 import {
   Box,
   Button,
   CircularProgress,
-  Select,
   MenuItem,
+  Select,
   SelectChangeEvent,
   Typography,
 } from "@mui/material";
-import useBoardList from "../hooks/useBoardList";
+import React, { useEffect } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import BoardTable from "../components/BoardTable";
 import PaginationComponent from "../components/PaginationComponent";
+import useBoardList from "../hooks/useBoardList";
 
 const BoardList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -20,7 +21,14 @@ const BoardList = () => {
   const page = parseInt(searchParams.get("page") || "0", 10);
   const size = parseInt(searchParams.get("size") || "10", 10);
 
-  const { boards, totalPages, loading, error } = useBoardList(page, size);
+  const { boards, totalPages, loading, error, fetchBoardList } = useBoardList(
+    page,
+    size
+  );
+
+  useEffect(() => {
+    fetchBoardList();
+  }, [fetchBoardList]);
 
   const handlePageChange = (
     _event: React.ChangeEvent<unknown>,
@@ -41,13 +49,7 @@ const BoardList = () => {
   };
 
   return (
-    <Box sx={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
-      <Typography
-        variant="h4"
-        sx={{ marginBottom: "20px", textAlign: "center" }}
-      >
-        게시판 목록
-      </Typography>
+    <BoardListWrapper>
       {error && <Typography color="error">{error}</Typography>}
       {loading ? (
         <Box
@@ -60,16 +62,43 @@ const BoardList = () => {
           <CircularProgress />
         </Box>
       ) : (
-        <>
-          <Box sx={{ textAlign: "right", marginBottom: "10px" }}>
-            <Button
-              variant="contained"
-              color="primary"
-              component={Link}
-              to="/boards/write"
-            >
-              글쓰기
-            </Button>
+        <div className="container">
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Box sx={{ textAlign: "right" }}>
+              <Button
+                variant="contained"
+                color="primary"
+                component={Link}
+                to="/boards/write"
+              >
+                글쓰기
+              </Button>
+            </Box>
+            <Box sx={{ textAlign: "center" }}>
+              <Typography
+                variant="body1"
+                component="label"
+                sx={{ marginRight: "10px" }}
+              >
+                페이지 당 게시글 수:
+              </Typography>
+              <Select
+                value={size}
+                onChange={handleSizeChange}
+                displayEmpty
+                sx={{ minWidth: "20px" }}
+              >
+                <MenuItem value={10}>10개</MenuItem>
+                <MenuItem value={20}>20개</MenuItem>
+                <MenuItem value={30}>30개</MenuItem>
+              </Select>
+            </Box>
           </Box>
           <BoardTable boards={boards} onRowClick={detailLink} />
           <PaginationComponent
@@ -77,29 +106,15 @@ const BoardList = () => {
             totalPages={totalPages}
             onPageChange={handlePageChange}
           />
-          <Box sx={{ textAlign: "center", marginTop: "20px" }}>
-            <Typography
-              variant="body1"
-              component="label"
-              sx={{ marginRight: "10px" }}
-            >
-              페이지 당 게시글 수:
-            </Typography>
-            <Select
-              value={size}
-              onChange={handleSizeChange}
-              displayEmpty
-              sx={{ minWidth: "80px" }}
-            >
-              <MenuItem value={10}>10개</MenuItem>
-              <MenuItem value={20}>20개</MenuItem>
-              <MenuItem value={30}>30개</MenuItem>
-            </Select>
-          </Box>
-        </>
+        </div>
       )}
-    </Box>
+    </BoardListWrapper>
   );
 };
 
 export default BoardList;
+
+const BoardListWrapper = styled.div`
+  width: 100%;
+  padding: 40px 0;
+`;

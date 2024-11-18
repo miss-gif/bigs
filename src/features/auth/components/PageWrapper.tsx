@@ -19,7 +19,7 @@ export default PageWrapper;
 const WrapperStyled = styled.div`
   max-width: 400px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 40px 0;
   text-align: center;
 
   h2 {

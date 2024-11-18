@@ -2,15 +2,16 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import { useState } from "react";
-import { createBoard } from "../api/api";
-import useFetchCategories from "../hooks/useFetchCategories";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { createBoard } from "../api/api";
+import useFetchCategories from "../hooks/useFetchCategories";
 
 interface BoardFormData {
   title: string;
   content: string;
   category: string;
+  file?: string;
 }
 
 const BoardWrite = () => {
@@ -19,6 +20,7 @@ const BoardWrite = () => {
     title: "",
     content: "",
     category: "",
+    file: "",
   });
   const { categories, error, loading } = useFetchCategories();
   const navigate = useNavigate();
@@ -48,17 +50,16 @@ const BoardWrite = () => {
     e.preventDefault();
 
     try {
-      // 유효성 검사
+      if (!formData.category) {
+        alert("카테고리를 선택해주세요.");
+        return;
+      }
       if (!formData.title.trim()) {
         alert("제목을 입력해주세요.");
         return;
       }
       if (!formData.content.trim()) {
         alert("내용을 입력해주세요.");
-        return;
-      }
-      if (!formData.category) {
-        alert("카테고리를 선택해주세요.");
         return;
       }
 
@@ -84,27 +85,6 @@ const BoardWrite = () => {
       <Title>글쓰기</Title>
       <form onSubmit={onSubmit}>
         <FormGroup>
-          <label htmlFor="title">제목</label>
-          <input
-            id="title"
-            type="text"
-            placeholder="제목을 입력하세요"
-            value={formData.title}
-            onChange={handleChange}
-          />
-        </FormGroup>
-
-        <FormGroup>
-          <label htmlFor="content">내용</label>
-          <textarea
-            id="content"
-            placeholder="내용을 입력하세요"
-            value={formData.content}
-            onChange={handleChange}
-          />
-        </FormGroup>
-
-        <FormGroup>
           <label htmlFor="category">카테고리</label>
           {loading ? (
             <p>로딩 중...</p>
@@ -127,7 +107,30 @@ const BoardWrite = () => {
         </FormGroup>
 
         <FormGroup>
-          <label htmlFor="file">파일 첨부 (선택)</label>
+          <label htmlFor="title">제목</label>
+          <input
+            id="title"
+            type="text"
+            placeholder="제목을 입력하세요"
+            value={formData.title}
+            onChange={handleChange}
+          />
+        </FormGroup>
+
+        <FormGroup>
+          <label htmlFor="content">내용</label>
+          <textarea
+            id="content"
+            placeholder="내용을 입력하세요"
+            value={formData.content}
+            onChange={handleChange}
+          />
+        </FormGroup>
+
+        <FormGroup>
+          <label htmlFor="file">
+            파일 첨부 <em>(필수)</em>
+          </label>
           <input
             id="file"
             type="file"
@@ -143,19 +146,14 @@ const BoardWrite = () => {
 export default BoardWrite;
 
 const Container = styled.div`
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  padding: 40px 0;
 `;
 
 const Title = styled.h2`
-  font-size: 24px;
+  font-size: 2rem;
   margin-bottom: 20px;
   text-align: center;
-  color: #333;
 `;
 
 const FormGroup = styled.div`
@@ -165,7 +163,6 @@ const FormGroup = styled.div`
     display: block;
     font-weight: bold;
     margin-bottom: 8px;
-    color: #555;
   }
 
   input,
@@ -173,10 +170,8 @@ const FormGroup = styled.div`
   select {
     width: 100%;
     padding: 10px;
-    font-size: 16px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    outline: none;
 
     &:focus {
       border-color: #007bff;
@@ -185,8 +180,8 @@ const FormGroup = styled.div`
   }
 
   textarea {
-    resize: vertical;
-    height: 120px;
+    resize: none;
+    height: 220px;
   }
 `;
 
